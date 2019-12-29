@@ -1,6 +1,9 @@
 package com.vesnadev.app.ws.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vesnadev.app.ws.SpringApplicationContext;
+import com.vesnadev.app.ws.service.UserService;
+import com.vesnadev.app.ws.shared.dto.UserDto;
 import com.vesnadev.app.ws.ui.model.request.UserLoginRequestModel;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -54,7 +57,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
                 .compact();
 
+        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
+        UserDto userDto = userService.getUser(username);
+
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+        res.addHeader("UserId", userDto.getUserId());
     }
 
 }
