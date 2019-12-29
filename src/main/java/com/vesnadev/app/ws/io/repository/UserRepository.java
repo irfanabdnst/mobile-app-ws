@@ -1,4 +1,4 @@
-package com.vesnadev.app.ws;
+package com.vesnadev.app.ws.io.repository;
 
 import com.vesnadev.app.ws.io.entity.UserEntity;
 import org.springframework.data.repository.CrudRepository;

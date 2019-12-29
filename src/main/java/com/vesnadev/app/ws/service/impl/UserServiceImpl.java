@@ -1,6 +1,6 @@
 package com.vesnadev.app.ws.service.impl;
 
-import com.vesnadev.app.ws.UserRepository;
+import com.vesnadev.app.ws.io.repository.UserRepository;
 import com.vesnadev.app.ws.io.entity.UserEntity;
 import com.vesnadev.app.ws.service.UserService;
 import com.vesnadev.app.ws.shared.Utils;
