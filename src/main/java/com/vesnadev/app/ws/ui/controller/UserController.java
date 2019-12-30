@@ -1,5 +1,6 @@
 package com.vesnadev.app.ws.ui.controller;
 
+import com.vesnadev.app.ws.io.entity.UserEntity;
 import com.vesnadev.app.ws.service.UserService;
 import com.vesnadev.app.ws.shared.dto.UserDto;
 import com.vesnadev.app.ws.ui.model.request.UserDetailsRequestModel;
@@ -15,9 +16,16 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping
-    public String getUser() {
-        return "get user was called";
+    @GetMapping(path = "/{id}")
+    public UserRest getUser(@PathVariable String id) {
+
+        UserRest returnValue = new UserRest();
+
+        UserDto userDto = userService.getUserByUserId(id);
+        BeanUtils.copyProperties(userDto, returnValue);
+
+        return returnValue;
+
     }
 
     @PostMapping
@@ -27,8 +35,8 @@ public class UserController {
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userDetails, userDto);
 
-         UserDto createdUser = userService.createUser(userDto);
-         BeanUtils.copyProperties(createdUser, returnValue);
+        UserDto createdUser = userService.createUser(userDto);
+        BeanUtils.copyProperties(createdUser, returnValue);
 
         return returnValue;
     }

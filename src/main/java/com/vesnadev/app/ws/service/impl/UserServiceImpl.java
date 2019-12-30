@@ -7,6 +7,7 @@ import com.vesnadev.app.ws.shared.Utils;
 import com.vesnadev.app.ws.shared.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,6 +54,18 @@ public class UserServiceImpl implements UserService {
         if (userEntity == null) throw new UsernameNotFoundException(email);
 
         UserDto returnValue = new UserDto();
+        BeanUtils.copyProperties(userEntity, returnValue);
+
+        return returnValue;
+    }
+
+    @Override
+    public UserDto getUserByUserId(String id) {
+        UserDto returnValue = new UserDto();
+        UserEntity userEntity = userRepository.findByUserId(id);
+
+        if (userEntity == null) throw new UsernameNotFoundException(id);
+
         BeanUtils.copyProperties(userEntity, returnValue);
 
         return returnValue;
