@@ -31,7 +31,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) throw new RuntimeException("Email already exists");
+        if (userRepository.findByEmail(user.getEmail()) != null)
+            throw new UserServiceException(user.getEmail() + " already used");
 
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(user, userEntity);
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService {
     public UserDto getUser(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
 
-        if (userEntity == null) throw new UsernameNotFoundException(email);
+        if (userEntity == null)
+            throw new UserServiceException("Record with provided email is not found");
 
         UserDto returnValue = new UserDto();
         BeanUtils.copyProperties(userEntity, returnValue);
@@ -65,7 +67,8 @@ public class UserServiceImpl implements UserService {
         UserDto returnValue = new UserDto();
         UserEntity userEntity = userRepository.findByUserId(id);
 
-        if (userEntity == null) throw new UsernameNotFoundException(id);
+        if (userEntity == null)
+            throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
         BeanUtils.copyProperties(userEntity, returnValue);
 
@@ -87,6 +90,16 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(updatedUser, returnValue);
 
         return returnValue;
+    }
+
+    @Override
+    public void deleteUser(String userId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (userEntity == null)
+            throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+        userRepository.delete(userEntity);
     }
 
     @Override
