@@ -10,12 +10,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("users")
 public class UserController {
 
     @Autowired
     UserService userService;
+
+    @GetMapping
+    public List<UserRest> getUsers() {
+        List<UserRest> reurnValue = new ArrayList<>();
+
+        List<UserDto> userDtos = userService.getUsers();
+        for (UserDto userDto: userDtos) {
+            UserRest userRest = new UserRest();
+            BeanUtils.copyProperties(userDto, userRest);
+            reurnValue.add(userRest);
+        }
+
+        return reurnValue;
+    }
 
     @GetMapping(
             path = "/{id}",

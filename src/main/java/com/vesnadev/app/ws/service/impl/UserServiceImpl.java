@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -88,6 +89,20 @@ public class UserServiceImpl implements UserService {
 
         UserEntity updatedUser = userRepository.save(userEntity);
         BeanUtils.copyProperties(updatedUser, returnValue);
+
+        return returnValue;
+    }
+
+    @Override
+    public List<UserDto> getUsers() {
+        List<UserDto> returnValue = new ArrayList<>();
+
+        List<UserEntity> userEntities = (List<UserEntity>) userRepository.findAll();
+        for (UserEntity userEntity: userEntities) {
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(userEntity, userDto);
+            returnValue.add(userDto);
+        }
 
         return returnValue;
     }
