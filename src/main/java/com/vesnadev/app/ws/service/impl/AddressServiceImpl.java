@@ -34,7 +34,7 @@ public class AddressServiceImpl implements AddressService {
         if (userEntity == null)
             throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
 
-        List<AddressEntity> addressEntity = addressRepository.findByUserDetails(userEntity);
+        List<AddressEntity> addressEntity = addressRepository.findAllByUserDetails(userEntity);
 
         Type listType = new TypeToken<List<AddressDto>>(){}.getType();
         List<AddressDto> returnValue = modelMapper.map(addressEntity, listType);
