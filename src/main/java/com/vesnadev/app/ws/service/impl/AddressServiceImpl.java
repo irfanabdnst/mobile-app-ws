@@ -36,8 +36,22 @@ public class AddressServiceImpl implements AddressService {
 
         List<AddressEntity> addressEntity = addressRepository.findAllByUserDetails(userEntity);
 
-        Type listType = new TypeToken<List<AddressDto>>(){}.getType();
+        Type listType = new TypeToken<List<AddressDto>>() {
+        }.getType();
         List<AddressDto> returnValue = modelMapper.map(addressEntity, listType);
+
+        return returnValue;
+    }
+
+    @Override
+    public AddressDto getUserAddress(String userId, String addressId) {
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (userEntity == null)
+            throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+        AddressEntity addressEntity = addressRepository.findByAddressId(addressId);
+        AddressDto returnValue = modelMapper.map(addressEntity, AddressDto.class);
 
         return returnValue;
     }

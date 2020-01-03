@@ -111,4 +111,14 @@ public class UserController {
         return returnValue;
     }
 
+    @GetMapping(
+            path = "/{userId}/addresses/{addressId}",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public AddressRest getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
+        AddressDto addressDto = addressService.getUserAddress(userId, addressId);
+        AddressRest returnValue = modelMapper.map(addressDto, AddressRest.class);
+
+        return returnValue;
+    }
+
 }
