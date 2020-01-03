@@ -1,7 +1,9 @@
 package com.vesnadev.app.ws.ui.controller;
 
 import com.vesnadev.app.ws.exceptions.UserServiceException;
+import com.vesnadev.app.ws.service.AddressService;
 import com.vesnadev.app.ws.service.UserService;
+import com.vesnadev.app.ws.shared.dto.AddressDto;
 import com.vesnadev.app.ws.shared.dto.UserDto;
 import com.vesnadev.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.vesnadev.app.ws.ui.model.response.*;
@@ -22,6 +24,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AddressService addressService;
 
     ModelMapper modelMapper = new ModelMapper();
 
@@ -98,7 +103,12 @@ public class UserController {
             path = "/{id}/addresses",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<AddressRest> getUserAddresses(@PathVariable String id) {
-        return null;
+        List<AddressDto> addressDtos = addressService.getUserAddresses(id);
+
+        Type listType = new TypeToken<List<AddressRest>>(){}.getType();
+        List<AddressRest> returnValue = modelMapper.map(addressDtos, listType);
+
+        return returnValue;
     }
 
 }
