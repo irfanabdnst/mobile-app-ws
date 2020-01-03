@@ -142,6 +142,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> searchUsers(String key) {
+        List<UserEntity> userEntities = userRepository.searchUser(key);
+
+        Type listType = new TypeToken<List<UserDto>>(){}.getType();
+        List<UserDto> returnValue = modelMapper.map(userEntities, listType);
+
+        return returnValue;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
 

@@ -9,13 +9,11 @@ import com.vesnadev.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.vesnadev.app.ws.ui.model.response.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,7 +31,8 @@ public class UserController {
     @GetMapping(path = "/all")
     public List<UserRest> getUsers() {
         List<UserDto> userDtos = userService.getUsers();
-        Type listType = new TypeToken<List<UserRest>>() {} .getType();
+        Type listType = new TypeToken<List<UserRest>>() {
+        }.getType();
 
         return modelMapper.map(userDtos, listType);
     }
@@ -44,7 +43,8 @@ public class UserController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "25") int limit) {
         List<UserDto> userDtos = userService.getUsers(page, limit);
-        Type listType = new TypeToken<List<UserRest>>(){}.getType();
+        Type listType = new TypeToken<List<UserRest>>() {
+        }.getType();
 
         return modelMapper.map(userDtos, listType);
     }
@@ -105,7 +105,8 @@ public class UserController {
     public List<AddressRest> getUserAddresses(@PathVariable String id) {
         List<AddressDto> addressDtos = addressService.getUserAddresses(id);
 
-        Type listType = new TypeToken<List<AddressRest>>(){}.getType();
+        Type listType = new TypeToken<List<AddressRest>>() {
+        }.getType();
         List<AddressRest> returnValue = modelMapper.map(addressDtos, listType);
 
         return returnValue;
@@ -117,6 +118,19 @@ public class UserController {
     public AddressRest getUserAddress(@PathVariable String userId, @PathVariable String addressId) {
         AddressDto addressDto = addressService.getUserAddress(userId, addressId);
         AddressRest returnValue = modelMapper.map(addressDto, AddressRest.class);
+
+        return returnValue;
+    }
+
+    @GetMapping("/search")
+    public List<UserRest> searchUsers(@RequestParam(name = "key") String key) {
+        String keyString = key.toLowerCase();
+
+        List<UserDto> userDtos = userService.searchUsers(keyString);
+
+        Type listType = new TypeToken<List<UserRest>>() {
+        }.getType();
+        List<UserRest> returnValue = modelMapper.map(userDtos, listType);
 
         return returnValue;
     }
