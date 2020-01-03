@@ -34,6 +34,17 @@ public class UserController {
     }
 
     @GetMapping(
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public List<UserRest> getUsers(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "limit", defaultValue = "25") int limit) {
+        List<UserDto> userDtos = userService.getUsers(page, limit);
+        Type listType = new TypeToken<List<UserRest>>(){}.getType();
+
+        return modelMapper.map(userDtos, listType);
+    }
+
+    @GetMapping(
             path = "/{id}",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest getUser(@PathVariable String id) {
@@ -84,14 +95,10 @@ public class UserController {
     }
 
     @GetMapping(
+            path = "/{id}/addresses",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public List<UserRest> getUsers(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "limit", defaultValue = "25") int limit) {
-        List<UserDto> userDtos = userService.getUsers(page, limit);
-        Type listType = new TypeToken<List<UserRest>>(){}.getType();
-
-        return modelMapper.map(userDtos, listType);
+    public List<AddressRest> getUserAddresses(@PathVariable String id) {
+        return null;
     }
 
 }
