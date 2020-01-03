@@ -5,11 +5,14 @@ import com.vesnadev.app.ws.service.UserService;
 import com.vesnadev.app.ws.shared.dto.UserDto;
 import com.vesnadev.app.ws.ui.model.request.UserDetailsRequestModel;
 import com.vesnadev.app.ws.ui.model.response.*;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,50 +23,36 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    ModelMapper modelMapper = new ModelMapper();
+
     @GetMapping(path = "/all")
     public List<UserRest> getUsers() {
-        List<UserRest> reurnValue = new ArrayList<>();
-
         List<UserDto> userDtos = userService.getUsers();
-        for (UserDto userDto : userDtos) {
-            UserRest userRest = new UserRest();
-            BeanUtils.copyProperties(userDto, userRest);
-            reurnValue.add(userRest);
-        }
+        Type listType = new TypeToken<List<UserRest>>() {} .getType();
 
-        return reurnValue;
+        return modelMapper.map(userDtos, listType);
     }
 
     @GetMapping(
             path = "/{id}",
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest getUser(@PathVariable String id) {
-
-        UserRest returnValue = new UserRest();
-
         UserDto userDto = userService.getUserByUserId(id);
-        BeanUtils.copyProperties(userDto, returnValue);
 
-        return returnValue;
-
+        return modelMapper.map(userDto, UserRest.class);
     }
 
     @PostMapping(
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws UserServiceException {
-        UserRest returnValue = new UserRest();
-
         if (userDetails.getFirstName().isEmpty() || userDetails.getLastName().isEmpty() || userDetails.getEmail().isEmpty() || userDetails.getPassword().isEmpty())
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetails, userDto);
-
+        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
         UserDto createdUser = userService.createUser(userDto);
-        BeanUtils.copyProperties(createdUser, returnValue);
 
-        return returnValue;
+        return modelMapper.map(createdUser, UserRest.class);
     }
 
     @PutMapping(
@@ -71,18 +60,13 @@ public class UserController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public UserRest updateUser(@PathVariable String id, @RequestBody UserDetailsRequestModel userDetails) throws UserServiceException {
-        UserRest returnValue = new UserRest();
-
         if (userDetails.getFirstName().isEmpty() || userDetails.getLastName().isEmpty())
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetails, userDto);
-
+        UserDto userDto = modelMapper.map(userDetails, UserDto.class);
         UserDto updatedUser = userService.updateUser(id, userDto);
-        BeanUtils.copyProperties(updatedUser, returnValue);
 
-        return returnValue;
+        return modelMapper.map(updatedUser, UserRest.class);
     }
 
     @DeleteMapping(
@@ -102,18 +86,12 @@ public class UserController {
     @GetMapping(
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public List<UserRest> getUsers(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "25") int limit) {
-        List<UserRest> returnValue = new ArrayList<>();
-
         List<UserDto> userDtos = userService.getUsers(page, limit);
-        for (UserDto userDto: userDtos) {
-            UserRest userRest = new UserRest();
-            BeanUtils.copyProperties(userDto, userRest);
-            returnValue.add(userRest);
-        }
+        Type listType = new TypeToken<List<UserRest>>(){}.getType();
 
-        return returnValue;
+        return modelMapper.map(userDtos, listType);
     }
 
 }
