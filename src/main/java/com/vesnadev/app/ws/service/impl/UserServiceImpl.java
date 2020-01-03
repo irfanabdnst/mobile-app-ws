@@ -5,6 +5,7 @@ import com.vesnadev.app.ws.io.entity.UserEntity;
 import com.vesnadev.app.ws.io.repositories.UserRepository;
 import com.vesnadev.app.ws.service.UserService;
 import com.vesnadev.app.ws.shared.Utils;
+import com.vesnadev.app.ws.shared.dto.AddressDto;
 import com.vesnadev.app.ws.shared.dto.UserDto;
 import com.vesnadev.app.ws.ui.model.response.ErrorMessages;
 import org.modelmapper.ModelMapper;
@@ -41,6 +42,13 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto user) {
         if (userRepository.findByEmail(user.getEmail()) != null)
             throw new UserServiceException(user.getEmail() + " already used");
+
+        for (int i = 0; i < user.getAddresses().size(); i++) {
+            AddressDto addressDto = user.getAddresses().get(i);
+            addressDto.setUserDetails(user);
+            addressDto.setAddressId(utils.generateAddressId(30));
+            user.getAddresses().set(i, addressDto);
+        }
 
         UserEntity userEntity = modelMapper.map(user, UserEntity.class);
 
